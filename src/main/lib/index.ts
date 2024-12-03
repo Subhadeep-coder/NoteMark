@@ -7,9 +7,10 @@ import path from "path";
 import { isEmpty } from 'lodash';
 import welcomeNoteFile from '../../../resources/welcomeNote.md?asset';
 
+const getAppPath = () => { return path.join(app.getAppPath(), "resources"); }
+
 export const getRootDir = async () => {
-    const basePath = app.getAppPath();
-    const resources = path.join(basePath, "resources");
+    const resources = getAppPath();
     const configFolder = path.join(resources, "config");
     const settingsFile = path.join(configFolder, "settings.json");
     const exists = await stat(settingsFile).then(() => true).catch(() => false);
@@ -156,9 +157,9 @@ export const handleFrameActions = (action: FrameWindowAction, mainWindow: Browse
 }
 
 export const changeTheme: ChangeTheme = async (theme) => {
-    const rootDir = await getRootDir();
-    await ensureDir(path.join(rootDir, "config"));
-    const filePath = path.join(rootDir, "config", "settings.json");
+    const appPath = getAppPath();
+    await ensureDir(path.join(appPath, "config"));
+    const filePath = path.join(appPath, "config", "settings.json");
     await ensureFile(filePath);
     const configFileContents = await readFile(filePath, {
         encoding: fileEncoding,
@@ -173,9 +174,9 @@ export const changeTheme: ChangeTheme = async (theme) => {
 }
 
 export const getTheme: GetTheme = async () => {
-    const rootDir = await getRootDir();
-    await ensureDir(path.join(rootDir, "config"));
-    const filePath = path.join(rootDir, "config", "settings.json");
+    const appPath = getAppPath();
+    await ensureDir(path.join(appPath, "config"));
+    const filePath = path.join(appPath, "config", "settings.json");
     await ensureFile(filePath);
 
     const configFileContents = await readFile(filePath, {
@@ -218,31 +219,43 @@ export const changeStorage: ChangeStorage = async () => {
         console.log("Folder selection was canceled by the user.");
         return "";
     }
-    console.log("Folder confirmed. Proceeding with additional actions...");
+
     const basePath = await getRootDir();
-    await mkdir(selectedFolderPath, { recursive: true });
+    console.log('basePath:', basePath);
     const newBasePath = path.join(selectedFolderPath, "resources");
+    await mkdir(newBasePath, { recursive: true });
+    console.log('newBasePath:', newBasePath);
     await copyFolders(basePath, newBasePath);
-    const content = JSON.parse(await readFile(path.join(newBasePath, "config", "settings.json"), { encoding: fileEncoding }));
+    const content = JSON.parse(await readFile(path.join(getAppPath(), "config", "settings.json"), { encoding: fileEncoding }));
+    console.log('content:', content);
     content["basePath"] = newBasePath;
-    await writeFile(path.join(newBasePath, "config", "settings.json"), JSON.stringify(content, null, 2), { encoding: fileEncoding });
+    console.log('updated content:', content);
+    await writeFile(path.join(getAppPath(), "config", "settings.json"), JSON.stringify(content, null, 2), { encoding: fileEncoding });
     return newBasePath;
 }
 
 const copyFolders = async (source: string, destination: string) => {
-    const entries = await readdir(source, { withFileTypes: true });
+    try {
 
-    for (const entry of entries) {
-        const srcPath = path.join(source, entry.name);
-        const destPath = path.join(destination, entry.name);
+        const entries = await readdir(source, { withFileTypes: true });
 
-        if (entry.isDirectory()) {
-            await mkdir(destPath, { recursive: true });
+        for (const entry of entries) {
+            const srcPath = path.join(source, entry.name);
+            const destPath = path.join(destination, entry.name);
 
-            await copyFolders(srcPath, destPath);
-        } else if (entry.isFile()) {
-            await copyFile(srcPath, destPath);
+            if (entry.isDirectory()) {
+                if (entry.name === 'config') {
+                    continue;
+                }
+                await mkdir(destPath, { recursive: true });
+
+                await copyFolders(srcPath, destPath);
+            } else if (entry.isFile() && entry.name.endsWith('.md')) {
+                await copyFile(srcPath, destPath);
+            }
         }
+    } catch (error) {
+        console.log(error);
     }
 }
 
