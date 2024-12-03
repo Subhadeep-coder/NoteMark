@@ -8,3 +8,4 @@ export * from './FloatingNoteTitle';
 export * from './AppInfo';
 export * from './Divider';
 export * from './buttons';
+export * from './settings';

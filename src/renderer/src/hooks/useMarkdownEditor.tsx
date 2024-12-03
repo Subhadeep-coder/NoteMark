@@ -15,7 +15,6 @@ export const useMarkdownEditor = () => {
         async (content: NoteContent) => {
             if (!selectedNote)
                 return;
-            console.log('Auto saving.....', selectedNote.title);
 
             await saveNote(content);
 

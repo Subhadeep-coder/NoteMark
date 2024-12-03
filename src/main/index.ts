@@ -2,10 +2,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createNote, deleteNote, getNotes, readNote, writeNote } from './lib'
-import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '@shared/types'
+import { changeStorage, changeTheme, createNote, deleteNote, getNotes, getStorage, getTheme, handleFrameActions, readNote, writeNote } from './lib'
+import { ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameWindowAction, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from '@shared/types'
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
@@ -48,6 +48,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  return mainWindow;
 }
 
 // This method will be called when Electron has finished
@@ -69,11 +70,16 @@ app.whenReady().then(() => {
   ipcMain.handle("write:note", (_, ...args: Parameters<WriteNote>) => writeNote(...args));
   ipcMain.handle("create:note", (_, ...args: Parameters<CreateNote>) => createNote(...args));
   ipcMain.handle("delete:note", (_, ...args: Parameters<DeleteNote>) => deleteNote(...args));
+  ipcMain.handle("change:theme", (_, ...args: Parameters<ChangeTheme>) => changeTheme(...args));
+  ipcMain.handle("get:theme", (_, ...args: Parameters<GetTheme>) => getTheme(...args));
+  ipcMain.handle("change:location", (_, ...args: Parameters<ChangeStorage>) => changeStorage(...args));
+  ipcMain.handle("get:location", (_, ...args: Parameters<GetStorage>) => getStorage(...args));
 
   // IPC test
   // ipcMain.on('ping', () => console.log('pong'))
 
-  createWindow()
+  const mainWindow = createWindow();
+  ipcMain.handle("frame:action", (_, action: FrameWindowAction) => handleFrameActions(action, mainWindow))
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

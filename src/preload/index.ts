@@ -1,4 +1,4 @@
-import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from "@shared/types";
+import { ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameAction, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from "@shared/types";
 import { contextBridge, ipcRenderer } from "electron";
 
 if (!process.contextIsolated) {
@@ -14,6 +14,11 @@ try {
     writeNote: (...args: Parameters<WriteNote>) => ipcRenderer.invoke("write:note", ...args),
     createNote: (...args: Parameters<CreateNote>) => ipcRenderer.invoke("create:note", ...args),
     deleteNote: (...args: Parameters<DeleteNote>) => ipcRenderer.invoke("delete:note", ...args),
+    frameAction: (...args: Parameters<FrameAction>) => ipcRenderer.invoke("frame:action", ...args),
+    changeTheme: (...args: Parameters<ChangeTheme>) => ipcRenderer.invoke("change:theme", ...args),
+    getTheme: (...args: Parameters<GetTheme>) => ipcRenderer.invoke("get:theme", ...args),
+    changeLocation: (...args: Parameters<ChangeStorage>) => ipcRenderer.invoke("change:location", ...args),
+    getLocation: (...args: Parameters<GetStorage>) => ipcRenderer.invoke("get:location", ...args),
   })
 } catch (error) {
   console.log(error);

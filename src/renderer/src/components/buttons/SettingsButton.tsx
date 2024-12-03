@@ -1,12 +1,21 @@
+import { twMerge } from "tailwind-merge";
 import { ActionButton } from "./ActionButton";
 import { IoSettingsSharp } from "react-icons/io5";
 
-type Props = {}
+type Props = {
+    isOpen: boolean;
+    onOpen: (param: boolean) => void;
+    className?: string;
+}
 
-export const SettingsButton = ({ ...props }: Props) => {
+export const SettingsButton = ({ isOpen, onOpen, className, ...props }: Props) => {
 
     return (
-        <ActionButton {...props} className="border-none">
+        <ActionButton
+            className={twMerge("border-none", className)}
+            onClick={() => onOpen(!isOpen)}
+            {...props}
+        >
             <IoSettingsSharp className="w-6 h-6 text-zinc-400" />
         </ActionButton>
     )
