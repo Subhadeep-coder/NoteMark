@@ -5,13 +5,13 @@ export const cn = (...args: ClassValue[]) => {
     return twMerge(clsx(...args));
 }
 
-const dateFormatter = new Intl.DateTimeFormat(window.context.locale, {
+const dateFormatter = (timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone) => new Intl.DateTimeFormat(window.context.locale, {
     dateStyle: "short",
     timeStyle: "short",
-    timeZone: "UTC"
+    timeZone
 });
 
-export const formatDateFromMs = (ms: number) => dateFormatter.format(ms);
+export const formatDateFromMs = (ms: number) => dateFormatter().format(ms);
 
 export const changeTheme = (theme: Themes) => {
     const body = document.body;

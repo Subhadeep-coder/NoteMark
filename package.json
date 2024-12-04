@@ -1,6 +1,6 @@
 {
   "name": "notemark",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A note app which basically saves note or text documents as markdown file.",
   "main": "./out/main/index.js",
   "author": {
