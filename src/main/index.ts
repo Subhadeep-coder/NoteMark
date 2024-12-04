@@ -2,9 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { changeStorage, changeTheme, createNote, deleteNote, getNotes, getStorage, getTheme, handleFrameActions, readNote, writeNote } from './lib'
-import { ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameWindowAction, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from '@shared/types'
-
+import {  changeFont, changeStorage, changeTheme, createNote, deleteNote,  getFont,  getNotes, getStorage, getTheme, handleFrameActions, readNote, writeNote } from './lib'
+import { ChangeFont, ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameWindowAction, GetFont, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from '@shared/types'
 function createWindow(): BrowserWindow {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -48,6 +47,7 @@ function createWindow(): BrowserWindow {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  
   return mainWindow;
 }
 
@@ -74,6 +74,8 @@ app.whenReady().then(() => {
   ipcMain.handle("get:theme", (_, ...args: Parameters<GetTheme>) => getTheme(...args));
   ipcMain.handle("change:location", (_, ...args: Parameters<ChangeStorage>) => changeStorage(...args));
   ipcMain.handle("get:location", (_, ...args: Parameters<GetStorage>) => getStorage(...args));
+  ipcMain.handle("change:font", (_, ...args: Parameters<ChangeFont>) => changeFont(...args));
+  ipcMain.handle("get:font", (_, ...args: Parameters<GetFont>) => getFont(...args));
 
   // IPC test
   // ipcMain.on('ping', () => console.log('pong'))

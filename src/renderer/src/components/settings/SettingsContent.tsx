@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { ThemeContent } from './ThemeContent';
 import { StorageContent } from './StorageContent';
 import { useSettingsList } from './SettingsProvider';
+import { FontContent } from './FontContent';
 
 type Props = {
     className: string;
@@ -17,8 +18,10 @@ export const SettingsContent = ({ className, ...props }: Props) => {
             {
                 settingsTab === SettingsTab.THEME ? (
                     <ThemeContent />
-                ) : (
+                ) : settingsTab === SettingsTab.LOCATION ? (
                     <StorageContent />
+                ) : (
+                    <FontContent />
                 )
             }
         </div>

@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameAction, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from '@shared/types'
+import { ChangeFont, ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameAction, GetFont, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from '@shared/types'
 
 declare global {
   interface Window {
@@ -16,6 +16,8 @@ declare global {
       getTheme: GetTheme,
       changeLocation: ChangeStorage,
       getLocation: GetStorage,
+      changeFont: ChangeFont
+      getFont: GetFont,
     }
   }
 }

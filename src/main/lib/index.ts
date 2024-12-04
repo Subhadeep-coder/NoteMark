@@ -1,13 +1,14 @@
-import { app, BrowserWindow, dialog, WebFrameMain } from "electron";
+import { BrowserWindow, dialog, WebFrameMain } from "electron";
 import { fileEncoding, welcomeFileName } from "../../shared/constants";
 import { NoteInfo } from "../../shared/models";
-import { ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameWindowAction, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from "../../shared/types";
+import { ChangeFont, ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameWindowAction, GetFont, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from "../../shared/types";
 import { copyFile, ensureDir, ensureFile, mkdir, readdir, readFile, remove, stat, writeFile } from "fs-extra";
 import path from "path";
 import { isEmpty } from 'lodash';
 import welcomeNoteFile from '../../../resources/welcomeNote.md?asset';
+import { homedir } from "os";
 
-const getAppPath = () => { return path.join(app.getAppPath(), "resources"); }
+const getAppPath = () => { return path.join(homedir(), "NoteMark", "resources"); }
 
 export const getRootDir = async () => {
     const resources = getAppPath();
@@ -19,6 +20,7 @@ export const getRootDir = async () => {
         const defaultContent = {
             theme: "DARK",
             basePath: resources,
+            font: "MONO"
         };
         await ensureFile(settingsFile);
         await writeFile(settingsFile, JSON.stringify(defaultContent, null, 2), { encoding: fileEncoding });
@@ -261,4 +263,38 @@ const copyFolders = async (source: string, destination: string) => {
 
 export const getStorage: GetStorage = async () => {
     return await getRootDir();
+}
+
+export const changeFont: ChangeFont = async (font) => {
+    const appPath = getAppPath();
+    await ensureDir(path.join(appPath, "config"));
+    const filePath = path.join(appPath, "config", "settings.json");
+    await ensureFile(filePath);
+    const configFileContents = await readFile(filePath, {
+        encoding: fileEncoding,
+    });
+
+    let content = {};
+    if (configFileContents) {
+        content = JSON.parse(configFileContents);
+    }
+    content["font"] = font;
+    await writeFile(filePath, JSON.stringify(content, null, 2), { encoding: fileEncoding });
+}
+
+export const getFont: GetFont = async () => {
+    const appPath = getAppPath();
+    await ensureDir(path.join(appPath, "config"));
+    const filePath = path.join(appPath, "config", "settings.json");
+    await ensureFile(filePath);
+
+    const configFileContents = await readFile(filePath, {
+        encoding: fileEncoding,
+    });
+    let content = {};
+    if (configFileContents) {
+        content = JSON.parse(configFileContents);
+    }
+
+    return content["font"];
 }

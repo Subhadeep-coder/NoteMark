@@ -1,9 +1,9 @@
 export const DraggableTopBar = () => {
     return (
         <>
-            <header className='absolute inset-0 h-8 pr-2 bg-transparent flex justify-end gap-x-4'>
+            <header className='absolute inset-0 h-8 bg-transparent flex justify-end'>
                 <button
-                    className="w-6 h-6 flex justify-center items-center hover:bg-white/10 group"
+                    className="w-10 h-6 px2 flex justify-center items-center hover:bg-white/10 group"
                     onClick={() => {
                         window.context.frameAction("MINIMIZE");
                     }}
@@ -13,7 +13,7 @@ export const DraggableTopBar = () => {
                     </svg>
                 </button>
                 <button
-                    className="w-6 h-6 flex justify-center items-center hover:bg-white/10 group"
+                    className="w-10 h-6 flex justify-center items-center hover:bg-white/10 group"
                     onClick={() => {
                         window.context.frameAction("MAXIMIZE");
                     }}
@@ -23,7 +23,7 @@ export const DraggableTopBar = () => {
                     </svg>
                 </button>
                 <button
-                    className="w-6 h-6 flex justify-center items-center hover:bg-red-500 group"
+                    className="w-10 h-6 flex justify-center items-center hover:bg-red-500 group"
                     onClick={() => {
                         window.context.frameAction("CLOSE");
                     }}

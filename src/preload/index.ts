@@ -1,4 +1,4 @@
-import { ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameAction, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from "@shared/types";
+import { ChangeFont, ChangeStorage, ChangeTheme, CreateNote, DeleteNote, FrameAction, GetFont, GetNotes, GetStorage, GetTheme, ReadNote, WriteNote } from "@shared/types";
 import { contextBridge, ipcRenderer } from "electron";
 
 if (!process.contextIsolated) {
@@ -19,6 +19,8 @@ try {
     getTheme: (...args: Parameters<GetTheme>) => ipcRenderer.invoke("get:theme", ...args),
     changeLocation: (...args: Parameters<ChangeStorage>) => ipcRenderer.invoke("change:location", ...args),
     getLocation: (...args: Parameters<GetStorage>) => ipcRenderer.invoke("get:location", ...args),
+    changeFont: (...args: Parameters<ChangeFont>) => ipcRenderer.invoke("change:font", ...args),
+    getFont: (...args: Parameters<GetFont>) => ipcRenderer.invoke("get:font", ...args),
   })
 } catch (error) {
   console.log(error);
